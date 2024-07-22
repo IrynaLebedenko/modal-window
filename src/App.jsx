@@ -1,15 +1,27 @@
-import UserSettingForm from "./components/Modal/UserSettingForm";
-// import React from 'react';
-// import UserForm from './UserForm';
+
+import { useState } from 'react';
+import UserSettingsModal from "./components/ModalUserSetting/ModalUserSetting";
+import UserSettingForm from './components/Modal/UserSettingForm';
 
 const App = () => {
-  const handleSubmit = (data) => {
-    console.log(data);
+   const [showModal, setShowModal] = useState(false);
+  const handleOpenModal = () => {
+    setShowModal(true);
   };
+
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+ 
 
   return (
     <div>
-      <UserSettingForm onSubmit={handleSubmit} />
+      <button onClick={handleOpenModal}>Open Modal</button>
+      <UserSettingsModal showModal={showModal} handleClose={handleCloseModal}>
+        <UserSettingForm />
+      </UserSettingsModal>
+      
     </div>
   );
 };

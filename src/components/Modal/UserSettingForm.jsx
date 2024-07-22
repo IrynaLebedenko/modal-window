@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { useForm/*, Controller*/ } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 import "./UserSettingForm.css"
 
 const UserSettingForm = ({ onSubmit }) => {
-  const [avatarPreview, setAvatarPreview] = useState(null);
+  const [avatar, setAvatar] = useState(null);
 
   const schema = Yup.object().shape({
     avatar: Yup.mixed(),
@@ -17,40 +17,58 @@ const UserSettingForm = ({ onSubmit }) => {
     waterIntake: Yup.number().positive('Water intake must be a positive number').required('Water intake is required'),
   });
 
-  const { register, handleSubmit, /*control,*/ formState: { errors } } = useForm({
+  const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema)
   });
 
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setAvatarPreview(URL.createObjectURL(file));
+      setAvatar(URL.createObjectURL(file));
     }
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
        
-      <div>
-        <label>Avatar:</label>
-        <input type="file" {...register('avatar')} onChange={handleAvatarChange} />
-        {errors.avatar && <p>{errors.avatar.message}</p>}
-        {avatarPreview && <img src={avatarPreview} alt="Avatar Preview" style={{ width: '100px', height: '100px' }} />}
-      </div>
+      <div className="avatar-upload-container">
+        
+        <div className="avatar-preview">
+          {avatar ? (
+            <img src={avatar} alt="Avatar" className="avatar-image" />
+          ) : (
+            <div className="avatar-placeholder">Avatar</div>
+          )}
+        </div>
+        <label className="avatar-upload-label">
+          <input type="file" accept="image/*" onChange={handleAvatarChange} className="avatar-upload-input" />
+          <div className="upload-icon-text">
+            <svg className="upload-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20"       height="20">
+              <path d="M5 20h14v-2H5v2zm7-18L5.33 13h3.16v7h6v-7h3.17L12 2z"/>
+            </svg>
+            <span className='upload-text'>upload a photo</span>
+          </div>
+        </label>
+    </div>
       
       <div className='main'>
         <div>
           <div>
             <label className="label gender">Your gender identity</label>
-            <label className='radio-container'>
-              <input className="radio " type="radio" name="gender" value="woman" checked />
-              {/* <span className="radio-checkmark"></span> */}
-              Woman
-            </label>
-            <label>
-              <input className="radio" type="radio" name="gender" value="man" {...register('gender')} />Man
-            </label>
-            {errors.gender && <p>{errors.gender.message}</p>}
+             <div className='radio-container'>
+                <label className="radio-gender">
+                  <input className="radio " type="radio" name="gender" value="woman" checked/>
+                  <span className='radio-checkmark'></span>
+                  Woman
+                </label> 
+                            
+                <label className="radio-gender">
+                  <input className="radio" type="radio" name="gender" value="man" />
+                  <span className='radio-checkmark'></span>
+                  Man
+                </label>
+
+              </div>
           </div>
 
           <div>
@@ -64,29 +82,34 @@ const UserSettingForm = ({ onSubmit }) => {
             <input className="input" type="email" {...register('email')} />
             {errors.email && <p>{errors.email.message}</p>}
           </div>
+
           <div className="">
             <label className="label norma">My daily norma</label>
-            <div className="container-formula">
+             <div className="container-formula">
                 <div>
                   <p>For woman</p>
                   <p className="formula">V=(M*0,03) + (T*0,4)</p>
                 </div>
+              
                 <div>
                   <p>For man</p>
                   <p className="formula">V=(M*0,04) + (T*0,6)</p>
                 </div>
-              </div>
-                <textarea className="text-formula" readOnly>* V is the volume of the water norm in liters per day, M is your body weight, T is the time of active sports, or another type of activity commensurate in terms of loads (in the absence of these, you must set 0)</textarea>
-              
-            </div>
+             </div>
+               <div className="textarea-container">
+                <div className="styled-text">
+                  <span className="highlight">*</span> V is the volume of the water norm in liters per day, M is your body weight, T is the time of active sports, or another type of activity commensurate in terms of loads (in the absence of these, you must set 0)
+                </div>
+               </div>
+          </div>
 
             <div className="sign">
-            <svg
-              className='svg'
-              xmlns="http://www.w3.org/2000/svg"
-              width="6"
-              height="22"
-              fill="none"
+              <svg
+                className='svg'
+                xmlns="http://www.w3.org/2000/svg"
+                width="6"
+                height="22"
+                fill="none"
               >
               <path
                 fill="#9BE1A0"
@@ -95,7 +118,7 @@ const UserSettingForm = ({ onSubmit }) => {
               </svg>
               <p className='hours'>Active time in hours</p>
             
-              </div>
+            </div>
           </div>
 
         <div>
@@ -116,9 +139,9 @@ const UserSettingForm = ({ onSubmit }) => {
             <p className="label water-drink">Write down how much water you will drink:</p>
             <input className="input" type="number" {...register('waterIntake')} />
             {errors.waterIntake && <p>{errors.waterIntake.message}</p>}
-            </div>
+          </div>
         </div>
-      </div>
+     </div>
 
       <button className="button" type="submit">Save</button>
     </form>
